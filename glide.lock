@@ -1,0 +1,42 @@
+hash: 06919bd37e4efed0bb59fa6bc81c23ffb55041e973c48839d8dcaecc0026f16f
+updated: 2017-05-11T01:05:25.938231616+02:00
+imports:
+- name: github.com/labstack/echo
+  version: 1049c9613cd371b7ea8f219404c9a821734781ed
+- name: github.com/labstack/gommon
+  version: 9298d710c664bcd21c454120f63a00fb7d484458
+  subpackages:
+  - color
+  - log
+- name: github.com/mattn/go-colorable
+  version: ded68f7a9561c023e790de24279db7ebf473ea80
+- name: github.com/mattn/go-isatty
+  version: fc9e8d8ef48496124e79ae0df75490096eccf6fe
+- name: github.com/ovh/go-ovh
+  version: d2207178e10e4527e8f222fd8707982df8c3af17
+- name: github.com/valyala/bytebufferpool
+  version: e746df99fe4a3986f4d4f79e13c1e0117ce9c2f7
+- name: github.com/valyala/fasttemplate
+  version: dcecefd839c4193db0d35b88ec65b4c12d360ab0
+- name: golang.org/x/crypto
+  version: 04eae0b62feaaf659a0ce2c4e8dc70b6ae2fff67
+  subpackages:
+  - acme
+  - acme/autocert
+- name: golang.org/x/sys
+  version: 9ccfe848b9db8435a24c424abbc07a921adf1df5
+  subpackages:
+  - unix
+testImports:
+- name: github.com/davecgh/go-spew
+  version: 6d212800a42e8ab5c146b8ace3490ee17e5225f9
+  subpackages:
+  - spew
+- name: github.com/pmezard/go-difflib
+  version: d8ed2627bdf02c080bf22230dbb337003b7aba2d
+  subpackages:
+  - difflib
+- name: github.com/stretchr/testify
+  version: 69483b4bd14f5845b5a1e55bca19e954e827f1d0
+  subpackages:
+  - assert

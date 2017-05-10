@@ -22,3 +22,10 @@ _testmain.go
 *.exe
 *.test
 *.prof
+
+# Glide
+vendor
+.glide/
+
+# Cochonou
+cochonou
