@@ -29,9 +29,12 @@ install:
 
 script:
     - go test $(glide novendor)
-    - docker build -t quay.io/genesor/cochonou:$CUSTOM_TAG .
     - docker login quay.io -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
     - if [ "$BRANCH" == "master" ]; then
-        docker tag quay.io/genesor/cochonou:$CUSTOM_TAG quay.io/genesor/cochonou:latest;
+        docker build -t quay.io/genesor/cochonou .;
+        docker tag quay.io/genesor/cochonou:latest quay.io/genesor/cochonou:$CUSTOM_TAG;
+        docker push quay.io/genesor/cochonou;
+      else
+        docker build -t quay.io/genesor/cochonou:$CUSTOM_TAG .;
+        docker push quay.io/genesor/cochonou:$CUSTOM_TAG;
       fi
-    - docker push quay.io/genesor/cochonou:$CUSTOM_TAG
