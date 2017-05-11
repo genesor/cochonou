@@ -7,5 +7,8 @@ deps:
 install:
 	glide install
 
+run:
+	go run cmd/cochonou/main.go
+
 test:
 	 go test -v -cover $(PACKAGES)
