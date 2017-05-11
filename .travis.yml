@@ -10,12 +10,18 @@ services:
 
 env:
   global:
-    - COMMIT=${TRAVIS_COMMIT::8}
+    - COMMIT=${TRAVIS_COMMIT}
     - BRANCH=${TRAVIS_BRANCH}
 
 before_install:
     - sudo apt-get update
     - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-engine
+    - if [ "$BRANCH" == "master" ]; then
+        export CUSTOM_TAG=$COMMIT;
+      else
+        export CUSTOM_TAG=$BRANCH;
+      fi
+
 
 install:
     - go get github.com/Masterminds/glide
@@ -23,6 +29,9 @@ install:
 
 script:
     - go test $(glide novendor)
-    - docker build -t quay.io/genesor/cochonou:$BRANCH-$COMMIT .
+    - docker build -t quay.io/genesor/cochonou:$CUSTOM_TAG .
     - docker login quay.io -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
-    - docker push quay.io/genesor/cochonou:$BRANCH-$COMMIT
+    - if [ "$BRANCH" == "master" ]; then
+        docker tag quay.io/genesor/cochonou:$CUSTOM_TAG quay.io/genesor/cochonou;
+      fi
+    - docker push quay.io/genesor/cochonou:$CUSTOM_TAG
