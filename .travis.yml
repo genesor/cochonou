@@ -3,18 +3,19 @@ sudo: required
 language: go
 
 go:
-    - 1.7
     - 1.8
-    - tip
 
 services:
     - docker
 
+env:
+  global:
+    - COMMIT=${TRAVIS_COMMIT::8}
+    - BRANCH=${TRAVIS_BRANCH}
+
 before_install:
-    - docker --version
     - sudo apt-get update
     - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-engine
-    - docker --version
 
 install:
     - go get github.com/Masterminds/glide
@@ -22,8 +23,6 @@ install:
 
 script:
     - go test $(glide novendor)
-    - docker build . -t genesor/cochonou
-
-after_success:
-    - docker login quay.io -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-    - docker push genesor/cochonou
+    - docker build -t quay.io/genesor/cochonou:$BRANCH-$COMMIT .
+    - docker login quay.io -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+    - docker push quay.io/genesor/cochonou:$BRANCH-$COMMIT

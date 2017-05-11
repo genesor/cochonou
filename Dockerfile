@@ -1,17 +1,19 @@
 # build stage
-FROM golang:alpine AS build-env
+FROM golang:1.8.1-alpine AS build-env
 
-RUN apk --update add ca-certificates && rm -rf /var/cache/apk/*
+RUN apk --no-cache add ca-certificates && update-ca-certificates
 
 ADD . /go/src/github.com/genesor/cochonou
-RUN cd /go/src/github.com/genesor/cochonou && go build ./cmd/cochonou/
+WORKDIR /go/src/github.com/genesor/cochonou
+RUN  go install -v ./cmd/cochonou/
 
 # final stage
-FROM alpine
+FROM alpine:3.5
 
-WORKDIR /app
+RUN apk --no-cache add ca-certificates && update-ca-certificates
 
 EXPOSE 9494
 
-COPY --from=build-env /go/src/github.com/genesor/cochonou/cochonou /app/
+WORKDIR /app
+COPY --from=build-env /go/bin/cochonou /app/
 ENTRYPOINT ./cochonou

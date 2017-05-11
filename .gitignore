@@ -29,3 +29,4 @@ vendor
 
 # Cochonou
 cochonou
+!cmd/cochonou
