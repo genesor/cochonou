@@ -32,6 +32,6 @@ script:
     - docker build -t quay.io/genesor/cochonou:$CUSTOM_TAG .
     - docker login quay.io -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
     - if [ "$BRANCH" == "master" ]; then
-        docker tag quay.io/genesor/cochonou:$CUSTOM_TAG quay.io/genesor/cochonou;
+        docker tag quay.io/genesor/cochonou:$CUSTOM_TAG quay.io/genesor/cochonou:latest;
       fi
     - docker push quay.io/genesor/cochonou:$CUSTOM_TAG
