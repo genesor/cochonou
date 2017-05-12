@@ -28,7 +28,7 @@ install:
     - glide install
 
 script:
-    - go test $(glide novendor)
+    - make test
     - docker login quay.io -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
     - if [ "$BRANCH" == "master" ]; then
         docker build -t quay.io/genesor/cochonou .;
