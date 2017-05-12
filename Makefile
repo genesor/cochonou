@@ -7,8 +7,14 @@ deps:
 install:
 	glide install
 
-run:
+run: dep-start
 	go run cmd/cochonou/main.go
 
-test:
-	 go test -v -cover $(PACKAGES)
+test: dep-start
+	go test -v -cover $(PACKAGES)
+
+dep-start:
+	docker-compose up -d
+
+dep-stop:
+	docker-compose stop
