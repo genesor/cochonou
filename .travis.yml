@@ -15,16 +15,16 @@ env:
     - DOCKER_COMPOSE_VERSION=1.13.0
 
 before_install:
+    # Update the docker-engine to the latest version
     - sudo apt-get update
     - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-engine
 
+    # Print the current docker-compose version
     - docker-compose --version
 
-    # As of the writing of this script Travis has docker-compose v1.4.2, we need
-    # to update it to 1.8+. $DOCKER_COMPOSE_VERSION is provide from the `env`
-    # above.
+    # As of the writing of this script Travis has docker-compose v1.8.3, we want
+    # to update it to the current latest 1.13.0.
     - sudo rm /usr/local/bin/docker-compose
-    - echo https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m`
     - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
     - chmod +x docker-compose
     - sudo mv docker-compose /usr/local/bin
@@ -34,13 +34,6 @@ before_install:
     # before doing the update.
     - docker-compose --version
 
-    - if [ "$BRANCH" == "master" ]; then
-        export CUSTOM_TAG=$COMMIT;
-      else
-        export CUSTOM_TAG=$BRANCH;
-      fi
-
-
 install:
     - go get github.com/Masterminds/glide
     - glide install
@@ -48,11 +41,22 @@ install:
 script:
     - make test
     - docker login quay.io -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+
+    # We want to have two different behaviours between builds on the master branch
+    # and builds on all other branches.
+    #
+    # Master branch:
+    #  - Create a new tag with the build commit as name
+    #  - Update latest tag
+    #
+    # Other branches:
+    #  - Update/Create the tag with the branch as name
+    #
     - if [ "$BRANCH" == "master" ]; then
         docker build -t quay.io/genesor/cochonou .;
-        docker tag quay.io/genesor/cochonou:latest quay.io/genesor/cochonou:$CUSTOM_TAG;
+        docker tag quay.io/genesor/cochonou:latest quay.io/genesor/cochonou:$COMMIT;
         docker push quay.io/genesor/cochonou;
       else
-        docker build -t quay.io/genesor/cochonou:$CUSTOM_TAG .;
-        docker push quay.io/genesor/cochonou:$CUSTOM_TAG;
+        docker build -t quay.io/genesor/cochonou:$BRANCH .;
+        docker push quay.io/genesor/cochonou:$BRANCH;
       fi
