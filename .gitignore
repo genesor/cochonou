@@ -30,3 +30,4 @@ vendor
 # Cochonou
 cochonou
 !cmd/cochonou
+cochonou_dev.db

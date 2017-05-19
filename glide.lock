@@ -1,6 +1,23 @@
-hash: 06919bd37e4efed0bb59fa6bc81c23ffb55041e973c48839d8dcaecc0026f16f
-updated: 2017-05-11T01:05:25.938231616+02:00
+hash: 60320e404d73aea894ffc145e019a092965a7a17e76b8014e85803795f7510ae
+updated: 2017-05-19T17:28:01.532666872+02:00
 imports:
+- name: github.com/asdine/storm
+  version: e8518cc1200f320e508639491f9390b9c7c37970
+  subpackages:
+  - codec
+  - codec/json
+  - index
+  - internal
+  - q
+- name: github.com/boltdb/bolt
+  version: 583e8937c61f1af6513608ccc75c97b6abdf4ff9
+- name: github.com/emirpasic/gods
+  version: f6c17b524822278a87e3b3bd809fec33b51f5b46
+  subpackages:
+  - containers
+  - trees
+  - trees/redblacktree
+  - utils
 - name: github.com/labstack/echo
   version: 1049c9613cd371b7ea8f219404c9a821734781ed
 - name: github.com/labstack/gommon
