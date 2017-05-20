@@ -4,6 +4,7 @@ import (
 	"github.com/asdine/storm"
 	"github.com/labstack/echo"
 
+	"github.com/genesor/cochonou/bolt"
 	"github.com/genesor/cochonou/http"
 	"github.com/genesor/cochonou/os"
 )
@@ -17,6 +18,15 @@ func main() {
 	}
 
 	defer db.Close()
+
+	// _, _ := db.Begin(true)
+
+	store := &bolt.ImageRedirectionStore{
+		DB: db,
+	}
+	if store != nil {
+
+	}
 
 	helloHandler := http.NewHelloHandler()
 	e.GET("/", helloHandler.HandleHello)

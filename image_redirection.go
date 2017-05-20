@@ -2,7 +2,7 @@ package cochonou
 
 // ImageRedirection is the struct that represents a redirection for an image.
 type ImageRedirection struct {
-	ID        string
+	ID        int
 	SubDomain string
 	URL       string
 }

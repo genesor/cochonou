@@ -31,3 +31,4 @@ vendor
 cochonou
 !cmd/cochonou
 cochonou_dev.db
+cochonou_test.db
