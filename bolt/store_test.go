@@ -4,25 +4,31 @@ import (
 	"testing"
 
 	"github.com/asdine/storm"
+	"github.com/stretchr/testify/require"
 
 	"github.com/genesor/cochonou"
 	"github.com/genesor/cochonou/bolt"
-	"github.com/stretchr/testify/require"
 )
+
+func setup(t *testing.T, db storm.Node) (*bolt.ImageRedirectionStore, func()) {
+	tx, err := db.Begin(true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	store := &bolt.ImageRedirectionStore{DB: tx}
+
+	return store, func() { tx.Rollback() }
+}
 
 func TestSave(t *testing.T) {
 	db, err := storm.Open("../cochonou_test.db")
 	if err != nil {
 		t.Fatal(err)
 	}
-	tx, err := db.Begin(true)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer tx.Rollback()
 
 	t.Run("OK - Save", func(t *testing.T) {
-		store := bolt.ImageRedirectionStore{DB: tx}
+		store, rollback := setup(t, db)
+		defer rollback()
 
 		redir := &cochonou.ImageRedirection{
 			URL:       "http://sadoma.so/",
@@ -42,5 +48,29 @@ func TestSave(t *testing.T) {
 		require.NoError(t, err)
 		require.NotEqual(t, 0, redir2.ID)
 		require.NotEqual(t, redir.ID, redir2.ID)
+	})
+
+	t.Run("NOK - Duplicate", func(t *testing.T) {
+		store, rollback := setup(t, db)
+		defer rollback()
+
+		redir := &cochonou.ImageRedirection{
+			URL:       "http://sadoma.so/",
+			SubDomain: "cochon",
+		}
+
+		redir2 := &cochonou.ImageRedirection{
+			URL:       "http://sadoma.so/",
+			SubDomain: "cochon",
+		}
+
+		err := store.Save(redir)
+		require.NoError(t, err)
+		require.NotEqual(t, 0, redir.ID)
+
+		err = store.Save(redir2)
+		require.NotNil(t, err)
+		require.Equal(t, cochonou.ErrSubDomainUsed, err)
+		require.Equal(t, 0, redir2.ID)
 	})
 }

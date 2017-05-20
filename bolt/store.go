@@ -17,6 +17,10 @@ func (s *ImageRedirectionStore) Save(redir *cochonou.ImageRedirection) error {
 
 	err := s.DB.Save(redirBolt)
 	if err != nil {
+		if err == storm.ErrAlreadyExists {
+			return cochonou.ErrSubDomainUsed
+		}
+
 		return err
 	}
 
