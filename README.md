@@ -1,6 +1,6 @@
 # cochonou
 
-[![GoDoc](https://godoc.org/github.com/genesor/cochonou?status.svg)](https://godoc.org/github.com/genesor/cochonou) [![Build Status](https://travis-ci.org/genesor/cochonou.svg?branch=master)](https://travis-ci.org/genesor/cochonou) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![GoDoc](https://godoc.org/github.com/genesor/cochonou?status.svg)](https://godoc.org/github.com/genesor/cochonou) [![Build Status](https://travis-ci.org/genesor/cochonou.svg?branch=master)](https://travis-ci.org/genesor/cochonou) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Quay.io](https://quay.io/repository/genesor/cochonou/status)](https://quay.io/repository/genesor/cochonou)
 
 Sub-domain generator for image listing written in Go
 
