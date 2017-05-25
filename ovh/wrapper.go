@@ -30,7 +30,7 @@ type HTTPAPIWrapper struct {
 func (w *HTTPAPIWrapper) GetSubDomainRedirectionID(name string) (int, error) {
 	redirectionIDs := make([]int, 0)
 
-	err := w.Client.Get("/domain/zone/"+w.Domain+"/redirection?subDomain="+name, &redirectionIDs)
+	err := w.Client.Get(path.Join("/domain/zone/", w.Domain, "/redirection?subDomain="+name), &redirectionIDs)
 	if err != nil {
 		return 0, err
 	}
