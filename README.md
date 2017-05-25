@@ -42,3 +42,21 @@ make install
 make run
 ```
 
+## Supported domains providers
+
+Cochonou supports thw following providers:
+
+* OVH
+
+### Setup OVH
+
+To use cochonou with OVH you need to create an OVH API App and a Token allowing Cochonou to manage Subdomain.
+
+Create your app here [https://eu.api.ovh.com/createToken/](https://eu.api.ovh.com/createToken/) and allow the following access:
+
+* **GET** /domain/*
+* **POST** /domain/*
+* **PUT** /domain/*
+* **DELETE** /domain/*
+
+You can choose the validity you want, but you'll have to update the value inside the project when the Token will expire and you'll need to create a new one.

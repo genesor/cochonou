@@ -1,5 +1,5 @@
-hash: 60320e404d73aea894ffc145e019a092965a7a17e76b8014e85803795f7510ae
-updated: 2017-05-19T17:28:01.532666872+02:00
+hash: 639e661f1afe58b60d88473fc4800a61cb63889ced5c394dc579490402c278f7
+updated: 2017-05-21T14:38:36.350894535+02:00
 imports:
 - name: github.com/asdine/storm
   version: e8518cc1200f320e508639491f9390b9c7c37970
@@ -31,6 +31,8 @@ imports:
   version: fc9e8d8ef48496124e79ae0df75490096eccf6fe
 - name: github.com/ovh/go-ovh
   version: d2207178e10e4527e8f222fd8707982df8c3af17
+  subpackages:
+  - ovh
 - name: github.com/valyala/bytebufferpool
   version: e746df99fe4a3986f4d4f79e13c1e0117ce9c2f7
 - name: github.com/valyala/fasttemplate
@@ -44,6 +46,8 @@ imports:
   version: 9ccfe848b9db8435a24c424abbc07a921adf1df5
   subpackages:
   - unix
+- name: gopkg.in/ini.v1
+  version: 36da989cdc560b989d8f195aec46214d33665d20
 testImports:
 - name: github.com/davecgh/go-spew
   version: 6d212800a42e8ab5c146b8ace3490ee17e5225f9
@@ -57,3 +61,4 @@ testImports:
   version: 69483b4bd14f5845b5a1e55bca19e954e827f1d0
   subpackages:
   - assert
+  - require

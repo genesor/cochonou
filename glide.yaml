@@ -3,6 +3,8 @@ import:
 - package: github.com/labstack/echo
   version: ^3.1.0
 - package: github.com/ovh/go-ovh
+  subpackages:
+  - ovh
 - package: github.com/asdine/storm
   version: ^0.8.0
 testImport:
