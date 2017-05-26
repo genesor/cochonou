@@ -8,7 +8,7 @@ import (
 	"github.com/labstack/echo"
 	"github.com/stretchr/testify/assert"
 
-	twingo_http "github.com/genesor/cochonou/http"
+	cochonou_http "github.com/genesor/cochonou/http"
 )
 
 func TestGetUser(t *testing.T) {
@@ -19,7 +19,7 @@ func TestGetUser(t *testing.T) {
 	c := e.NewContext(req, rec)
 	c.SetPath("/")
 
-	h := twingo_http.NewHelloHandler()
+	h := cochonou_http.NewHelloHandler()
 
 	// Assertions
 	if assert.NoError(t, h.HandleHello(c)) {

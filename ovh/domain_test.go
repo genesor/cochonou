@@ -4,10 +4,11 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/stretchr/testify/require"
+
 	"github.com/Genesor/cochonou"
 	"github.com/genesor/cochonou/ovh"
 	"github.com/genesor/cochonou/ovh/mock"
-	"github.com/stretchr/testify/require"
 )
 
 func setupDomainHandler() (*ovh.DomainHandler, *mock.APIWrapper) {
