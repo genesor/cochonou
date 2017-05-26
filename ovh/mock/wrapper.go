@@ -1,7 +1,7 @@
 package mock
 
 import (
-	"github.com/Genesor/cochonou/ovh"
+	"github.com/genesor/cochonou/ovh"
 )
 
 type APIWrapper struct {

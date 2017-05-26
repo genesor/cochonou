@@ -6,11 +6,11 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/Genesor/cochonou/ovh"
+	"github.com/genesor/cochonou/ovh"
 	"github.com/genesor/cochonou/ovh/mock"
 )
 
-func setup() (*ovh.HTTPAPIWrapper, *mock.HTTPAPIClient) {
+func setupWrapper() (*ovh.HTTPAPIWrapper, *mock.HTTPAPIClient) {
 	client := &mock.HTTPAPIClient{}
 	wrapper := &ovh.HTTPAPIWrapper{
 		Domain: "test.com",
@@ -24,7 +24,7 @@ func TestWrapperGetSubDomainRedirectionID(t *testing.T) {
 	t.Run("OK", func(t *testing.T) {
 		t.Parallel()
 
-		wrapper, client := setup()
+		wrapper, client := setupWrapper()
 
 		client.GetFn = func(url string, resType interface{}) error {
 			require.Equal(t, "/domain/zone/test.com/redirection?subDomain=subtest", url)
@@ -42,12 +42,13 @@ func TestWrapperGetSubDomainRedirectionID(t *testing.T) {
 
 		require.NoError(t, err)
 		require.Equal(t, 1234, ID)
+		require.Equal(t, 1, client.GetCall)
 	})
 
 	t.Run("NOK - No result", func(t *testing.T) {
 		t.Parallel()
 
-		wrapper, client := setup()
+		wrapper, client := setupWrapper()
 
 		client.GetFn = func(url string, resType interface{}) error {
 			require.Equal(t, "/domain/zone/test.com/redirection?subDomain=subtest", url)
@@ -66,12 +67,13 @@ func TestWrapperGetSubDomainRedirectionID(t *testing.T) {
 		require.Error(t, err)
 		require.Equal(t, ovh.ErrNoResult, err)
 		require.Equal(t, 0, ID)
+		require.Equal(t, 1, client.GetCall)
 	})
 
 	t.Run("NOK - Multi result", func(t *testing.T) {
 		t.Parallel()
 
-		wrapper, client := setup()
+		wrapper, client := setupWrapper()
 
 		client.GetFn = func(url string, resType interface{}) error {
 			require.Equal(t, "/domain/zone/test.com/redirection?subDomain=subtest", url)
@@ -90,12 +92,13 @@ func TestWrapperGetSubDomainRedirectionID(t *testing.T) {
 		require.Error(t, err)
 		require.Equal(t, ovh.ErrNonUniqueResult, err)
 		require.Equal(t, 0, ID)
+		require.Equal(t, 1, client.GetCall)
 	})
 
 	t.Run("NOK - Error API", func(t *testing.T) {
 		t.Parallel()
 
-		wrapper, client := setup()
+		wrapper, client := setupWrapper()
 
 		client.GetFn = func(url string, resType interface{}) error {
 			require.Equal(t, "/domain/zone/test.com/redirection?subDomain=subtest", url)
@@ -112,6 +115,7 @@ func TestWrapperGetSubDomainRedirectionID(t *testing.T) {
 
 		require.Error(t, err)
 		require.Equal(t, 0, ID)
+		require.Equal(t, 1, client.GetCall)
 	})
 }
 
@@ -119,7 +123,7 @@ func TestWrapperGetSubDomainRedirection(t *testing.T) {
 	t.Run("OK", func(t *testing.T) {
 		t.Parallel()
 
-		wrapper, client := setup()
+		wrapper, client := setupWrapper()
 
 		client.GetFn = func(url string, resType interface{}) error {
 			require.Equal(t, "/domain/zone/test.com/redirection/1234", url)
@@ -143,17 +147,19 @@ func TestWrapperGetSubDomainRedirection(t *testing.T) {
 		subRedir, err := wrapper.GetSubDomainRedirection(1234)
 
 		require.NoError(t, err)
+		require.NotNil(t, subRedir)
 		require.Equal(t, 1234, subRedir.ID)
 		require.Equal(t, "test.com", subRedir.Zone)
 		require.Equal(t, "http://sadoma.so", subRedir.Target)
 		require.Equal(t, "subtest", subRedir.SubDomain)
 		require.Equal(t, "visiblePermanent", subRedir.Type)
+		require.Equal(t, 1, client.GetCall)
 	})
 
 	t.Run("NOK", func(t *testing.T) {
 		t.Parallel()
 
-		wrapper, client := setup()
+		wrapper, client := setupWrapper()
 
 		client.GetFn = func(url string, resType interface{}) error {
 			require.Equal(t, "/domain/zone/test.com/redirection/1234", url)
@@ -170,5 +176,6 @@ func TestWrapperGetSubDomainRedirection(t *testing.T) {
 
 		require.Error(t, err)
 		require.Nil(t, subRedir)
+		require.Equal(t, 1, client.GetCall)
 	})
 }
