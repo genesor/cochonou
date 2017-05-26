@@ -7,7 +7,6 @@ type Client struct {
 
 // GetDomainRedirectionByName call the API to retrieve all the needed information for a subdomain.
 func (c *Client) GetDomainRedirectionByName(name string) (*DomainRedirection, error) {
-
 	id, err := c.OVHWrapper.GetDomainRedirectionID(name)
 	if err != nil {
 		return nil, err
