@@ -14,10 +14,24 @@ var (
 	ErrNonUniqueResult = errors.New("non unique result")
 )
 
+// DomainRedirection represents an OVH subdomain redirection.
+type DomainRedirection struct {
+	ID          int    `json:"id,omitempty"`
+	Zone        string `json:"zone,omitempty"`
+	Description string `json:"description,omitempty"`
+	Keywords    string `json:"keywords,omitempty"`
+	Target      string `json:"target"`
+	SubDomain   string `json:"subDomain"`
+	Type        string `json:"type"` // invisible, visible, visiblePermanent
+	Title       string `json:"title,omitempty"`
+}
+
 // APIWrapper is the interface of a bridge between OVH and differents structs.
 type APIWrapper interface {
-	GetSubDomainRedirectionID(name string) (int, error)
-	GetSubDomainRedirection(ID int) (*SubDomainRedirection, error)
+	GetDomainRedirectionID(name string) (int, error)
+	GetDomainRedirection(ID int) (*DomainRedirection, error)
+	PostDomainRedirection(*DomainRedirection) (*DomainRedirection, error)
+	DomainRefreshDNSZone() error
 }
 
 // HTTPAPIWrapper is the HTTP wrapper for the OVH API
@@ -26,8 +40,8 @@ type HTTPAPIWrapper struct {
 	Domain string
 }
 
-// GetSubDomainRedirectionID fetches this ID of a redirection from its subdomain value.
-func (w *HTTPAPIWrapper) GetSubDomainRedirectionID(name string) (int, error) {
+// GetDomainRedirectionID fetches the ID of a redirection from its subdomain value.
+func (w *HTTPAPIWrapper) GetDomainRedirectionID(name string) (int, error) {
 	redirectionIDs := make([]int, 0)
 
 	err := w.Client.Get(path.Join("/domain/zone/", w.Domain, "/redirection?subDomain="+name), &redirectionIDs)
@@ -44,20 +58,9 @@ func (w *HTTPAPIWrapper) GetSubDomainRedirectionID(name string) (int, error) {
 	return redirectionIDs[0], nil
 }
 
-// SubDomainRedirection represents an OVH subdomain redirection.
-type SubDomainRedirection struct {
-	ID          int    `json:"id"`
-	Zone        string `json:"zone"`
-	Description string `json:"description"`
-	Keywords    string `json:"keywords"`
-	Target      string `json:"target"`
-	SubDomain   string `json:"subDomain"`
-	Type        string `json:"type"` // invisible, visible, visiblePermanent
-	Title       string `json:"title"`
-}
-
-func (w *HTTPAPIWrapper) GetSubDomainRedirection(ID int) (*SubDomainRedirection, error) {
-	subRedir := new(SubDomainRedirection)
+// GetDomainRedirection fetches all the data for a DomainRedirection from its ID.
+func (w *HTTPAPIWrapper) GetDomainRedirection(ID int) (*DomainRedirection, error) {
+	subRedir := new(DomainRedirection)
 
 	err := w.Client.Get(path.Join("/domain/zone/", w.Domain, "/redirection/", strconv.Itoa(ID)), subRedir)
 	if err != nil {
@@ -65,6 +68,28 @@ func (w *HTTPAPIWrapper) GetSubDomainRedirection(ID int) (*SubDomainRedirection,
 	}
 
 	return subRedir, nil
+}
+
+// PostDomainRedirection fetches all the data for a DomainRedirection from its ID.
+func (w *HTTPAPIWrapper) PostDomainRedirection(subRedir *DomainRedirection) (*DomainRedirection, error) {
+	ovhRedir := new(DomainRedirection)
+
+	err := w.Client.Post(path.Join("/domain/zone/", w.Domain, "/redirection"), subRedir, ovhRedir)
+	if err != nil {
+		return nil, err
+	}
+
+	return ovhRedir, nil
+}
+
+// DomainRefreshDNSZone ask to perform a refresh of the DNS Zone for the domain.
+func (w *HTTPAPIWrapper) DomainRefreshDNSZone() error {
+	err := w.Client.Post(path.Join("/domain/zone/", w.Domain, "/refresh"), nil, nil)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // HTTPAPIClient is the interface for an HTTP Client using an API

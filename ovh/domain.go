@@ -4,8 +4,8 @@ package ovh
 type DomainHandler struct {
 }
 
-// CreateSubDomainRedirection creates a new subdomain redirection for your OVH domain
+// CreateDomainRedirection creates a new subdomain redirection for your OVH domain
 // using the API.
-func (h *DomainHandler) CreateSubDomainRedirection(subDomain string, dest string) error {
+func (h *DomainHandler) CreateDomainRedirection(subDomain string, dest string) error {
 	return nil
 }

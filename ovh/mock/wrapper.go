@@ -5,21 +5,39 @@ import (
 )
 
 type APIWrapper struct {
-	GetSubDomainRedirectionIDFn   func(string) (int, error)
-	GetSubDomainRedirectionIDCall int
+	GetDomainRedirectionIDFn   func(string) (int, error)
+	GetDomainRedirectionIDCall int
 
-	GetSubDomainRedirectionFn   func(int) (*ovh.SubDomainRedirection, error)
-	GetSubDomainRedirectionCall int
+	GetDomainRedirectionFn   func(int) (*ovh.DomainRedirection, error)
+	GetDomainRedirectionCall int
+
+	PostDomainRedirectionFn   func(*ovh.DomainRedirection) (*ovh.DomainRedirection, error)
+	PostDomainRedirectionCall int
+
+	DomainRefreshDNSZoneFn   func() error
+	DomainRefreshDNSZoneCall int
 }
 
-func (w *APIWrapper) GetSubDomainRedirectionID(name string) (int, error) {
-	w.GetSubDomainRedirectionIDCall++
+func (w *APIWrapper) GetDomainRedirectionID(name string) (int, error) {
+	w.GetDomainRedirectionIDCall++
 
-	return w.GetSubDomainRedirectionIDFn(name)
+	return w.GetDomainRedirectionIDFn(name)
 }
 
-func (w *APIWrapper) GetSubDomainRedirection(ID int) (*ovh.SubDomainRedirection, error) {
-	w.GetSubDomainRedirectionCall++
+func (w *APIWrapper) GetDomainRedirection(ID int) (*ovh.DomainRedirection, error) {
+	w.GetDomainRedirectionCall++
 
-	return w.GetSubDomainRedirectionFn(ID)
+	return w.GetDomainRedirectionFn(ID)
+}
+
+func (w *APIWrapper) PostDomainRedirection(subRedir *ovh.DomainRedirection) (*ovh.DomainRedirection, error) {
+	w.PostDomainRedirectionCall++
+
+	return w.PostDomainRedirectionFn(subRedir)
+}
+
+func (w *APIWrapper) DomainRefreshDNSZone() error {
+	w.DomainRefreshDNSZoneCall++
+
+	return w.DomainRefreshDNSZoneFn()
 }

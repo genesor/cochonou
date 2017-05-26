@@ -20,7 +20,7 @@ func setupWrapper() (*ovh.HTTPAPIWrapper, *mock.HTTPAPIClient) {
 	return wrapper, client
 }
 
-func TestWrapperGetSubDomainRedirectionID(t *testing.T) {
+func TestWrapperGetDomainRedirectionID(t *testing.T) {
 	t.Run("OK", func(t *testing.T) {
 		t.Parallel()
 
@@ -31,14 +31,14 @@ func TestWrapperGetSubDomainRedirectionID(t *testing.T) {
 
 			returnValue, ok := resType.(*[]int)
 			if !ok {
-				t.Error("Wrong type given by GetSubDomainRedirectionID")
+				t.Error("Wrong type given by GetDomainRedirectionID")
 			}
 			*returnValue = []int{1234}
 
 			return nil
 		}
 
-		ID, err := wrapper.GetSubDomainRedirectionID("subtest")
+		ID, err := wrapper.GetDomainRedirectionID("subtest")
 
 		require.NoError(t, err)
 		require.Equal(t, 1234, ID)
@@ -55,14 +55,14 @@ func TestWrapperGetSubDomainRedirectionID(t *testing.T) {
 
 			returnValue, ok := resType.(*[]int)
 			if !ok {
-				t.Error("Wrong type given by GetSubDomainRedirectionID")
+				t.Error("Wrong type given by GetDomainRedirectionID")
 			}
 			*returnValue = []int{}
 
 			return nil
 		}
 
-		ID, err := wrapper.GetSubDomainRedirectionID("subtest")
+		ID, err := wrapper.GetDomainRedirectionID("subtest")
 
 		require.Error(t, err)
 		require.Equal(t, ovh.ErrNoResult, err)
@@ -80,14 +80,14 @@ func TestWrapperGetSubDomainRedirectionID(t *testing.T) {
 
 			returnValue, ok := resType.(*[]int)
 			if !ok {
-				t.Error("Wrong type given by GetSubDomainRedirectionID")
+				t.Error("Wrong type given by GetDomainRedirectionID")
 			}
 			*returnValue = []int{1234, 5678}
 
 			return nil
 		}
 
-		ID, err := wrapper.GetSubDomainRedirectionID("subtest")
+		ID, err := wrapper.GetDomainRedirectionID("subtest")
 
 		require.Error(t, err)
 		require.Equal(t, ovh.ErrNonUniqueResult, err)
@@ -105,13 +105,13 @@ func TestWrapperGetSubDomainRedirectionID(t *testing.T) {
 
 			_, ok := resType.(*[]int)
 			if !ok {
-				t.Error("Wrong type given by GetSubDomainRedirectionID")
+				t.Error("Wrong type given by GetDomainRedirectionID")
 			}
 
 			return errors.New("some error")
 		}
 
-		ID, err := wrapper.GetSubDomainRedirectionID("subtest")
+		ID, err := wrapper.GetDomainRedirectionID("subtest")
 
 		require.Error(t, err)
 		require.Equal(t, 0, ID)
@@ -119,7 +119,7 @@ func TestWrapperGetSubDomainRedirectionID(t *testing.T) {
 	})
 }
 
-func TestWrapperGetSubDomainRedirection(t *testing.T) {
+func TestWrapperGetDomainRedirection(t *testing.T) {
 	t.Run("OK", func(t *testing.T) {
 		t.Parallel()
 
@@ -128,12 +128,12 @@ func TestWrapperGetSubDomainRedirection(t *testing.T) {
 		client.GetFn = func(url string, resType interface{}) error {
 			require.Equal(t, "/domain/zone/test.com/redirection/1234", url)
 
-			returnValue, ok := resType.(*ovh.SubDomainRedirection)
+			returnValue, ok := resType.(*ovh.DomainRedirection)
 			if !ok {
-				t.Error("Wrong type given by GetSubDomainRedirection")
+				t.Error("Wrong type given by GetDomainRedirection")
 			}
 
-			*returnValue = ovh.SubDomainRedirection{
+			*returnValue = ovh.DomainRedirection{
 				ID:        1234,
 				Zone:      "test.com",
 				Target:    "http://sadoma.so",
@@ -144,7 +144,7 @@ func TestWrapperGetSubDomainRedirection(t *testing.T) {
 			return nil
 		}
 
-		subRedir, err := wrapper.GetSubDomainRedirection(1234)
+		subRedir, err := wrapper.GetDomainRedirection(1234)
 
 		require.NoError(t, err)
 		require.NotNil(t, subRedir)
@@ -164,18 +164,111 @@ func TestWrapperGetSubDomainRedirection(t *testing.T) {
 		client.GetFn = func(url string, resType interface{}) error {
 			require.Equal(t, "/domain/zone/test.com/redirection/1234", url)
 
-			_, ok := resType.(*ovh.SubDomainRedirection)
+			_, ok := resType.(*ovh.DomainRedirection)
 			if !ok {
-				t.Error("Wrong type given by GetSubDomainRedirection")
+				t.Error("Wrong type given by GetDomainRedirection")
 			}
 
 			return errors.New("some error")
 		}
 
-		subRedir, err := wrapper.GetSubDomainRedirection(1234)
+		subRedir, err := wrapper.GetDomainRedirection(1234)
 
 		require.Error(t, err)
 		require.Nil(t, subRedir)
 		require.Equal(t, 1, client.GetCall)
+	})
+}
+
+func TestWrapperPostDomainRedirection(t *testing.T) {
+	t.Run("OK", func(t *testing.T) {
+		t.Parallel()
+
+		wrapper, client := setupWrapper()
+
+		client.PostFn = func(url string, reqType interface{}, resType interface{}) error {
+			require.Equal(t, "/domain/zone/test.com/redirection", url)
+
+			reqRedir, ok := reqType.(*ovh.DomainRedirection)
+			if !ok {
+				t.Error("Wrong type given by PostDomainRedirection")
+			}
+
+			require.Equal(t, 0, reqRedir.ID)
+			require.Equal(t, "subtest", reqRedir.SubDomain)
+			require.Equal(t, "visiblePermanent", reqRedir.Type)
+
+			returnValue, ok := resType.(*ovh.DomainRedirection)
+			if !ok {
+				t.Error("Wrong type given by PostDomainRedirection")
+			}
+
+			*returnValue = ovh.DomainRedirection{
+				ID:        1234,
+				Zone:      "test.com",
+				Target:    "http://sadoma.so",
+				SubDomain: "subtest",
+				Type:      "visiblePermanent",
+			}
+
+			return nil
+		}
+
+		redir := ovh.DomainRedirection{
+			Zone:      "test.com",
+			Target:    "http://sadoma.so",
+			SubDomain: "subtest",
+			Type:      "visiblePermanent",
+		}
+
+		subRedir, err := wrapper.PostDomainRedirection(&redir)
+
+		require.NoError(t, err)
+		require.NotNil(t, subRedir)
+		require.Equal(t, 1234, subRedir.ID)
+		require.Equal(t, "test.com", subRedir.Zone)
+		require.Equal(t, "http://sadoma.so", subRedir.Target)
+		require.Equal(t, "subtest", subRedir.SubDomain)
+		require.Equal(t, "visiblePermanent", subRedir.Type)
+		require.Equal(t, 1, client.PostCall)
+	})
+
+	t.Run("NOK", func(t *testing.T) {
+		t.Parallel()
+
+		wrapper, client := setupWrapper()
+
+		client.PostFn = func(url string, reqType interface{}, resType interface{}) error {
+			require.Equal(t, "/domain/zone/test.com/redirection", url)
+
+			reqRedir, ok := reqType.(*ovh.DomainRedirection)
+			if !ok {
+				t.Error("Wrong type given by PostDomainRedirection")
+			}
+
+			require.Equal(t, 0, reqRedir.ID)
+			require.Equal(t, "subtest", reqRedir.SubDomain)
+			require.Equal(t, "visiblePermanent", reqRedir.Type)
+
+			_, ok = resType.(*ovh.DomainRedirection)
+			if !ok {
+				t.Error("Wrong type given by PostDomainRedirection")
+			}
+
+			return errors.New("some error")
+		}
+
+		redir := ovh.DomainRedirection{
+			Zone:      "test.com",
+			Target:    "http://sadoma.so",
+			SubDomain: "subtest",
+			Type:      "visiblePermanent",
+		}
+
+		subRedir, err := wrapper.PostDomainRedirection(&redir)
+
+		require.Error(t, err)
+		require.Nil(t, subRedir)
+		require.Equal(t, 1, client.PostCall)
 	})
 }
