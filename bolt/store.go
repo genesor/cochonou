@@ -6,14 +6,14 @@ import (
 	"github.com/genesor/cochonou"
 )
 
-// ImageRedirectionStore is the implementation of cochonou.ImageRedirectionStore for BoltDB.
-type ImageRedirectionStore struct {
+// RedirectionStore is the implementation of cochonou.RedirectionStore for BoltDB.
+type RedirectionStore struct {
 	DB storm.Node
 }
 
-// Save saves an ImageRedirection into the Bolt database.
-func (s *ImageRedirectionStore) Save(redir *cochonou.ImageRedirection) error {
-	redirBolt := toBoltImageRedirection(redir)
+// Save saves an Redirection into the Bolt database.
+func (s *RedirectionStore) Save(redir *cochonou.Redirection) error {
+	redirBolt := toBoltRedirection(redir)
 
 	err := s.DB.Save(redirBolt)
 	if err != nil {
@@ -24,14 +24,14 @@ func (s *ImageRedirectionStore) Save(redir *cochonou.ImageRedirection) error {
 		return err
 	}
 
-	*redir = *fromBoltImageRedirection(redirBolt)
+	*redir = *fromBoltRedirection(redirBolt)
 
 	return nil
 }
 
-// All fetches all the ImageRedirection from the Bolt database.
-func (s *ImageRedirectionStore) All() ([]cochonou.ImageRedirection, error) {
-	list := make([]cochonou.ImageRedirection, 0)
-
-	return list, nil
-}
+// All fetches all the Redirection from the Bolt database.
+// func (s *RedirectionStore) All() ([]cochonou.Redirection, error) {
+// 	list := make([]cochonou.Redirection, 0)
+//
+// 	return list, nil
+// }

@@ -19,16 +19,14 @@ func main() {
 
 	defer db.Close()
 
-	// _, _ := db.Begin(true)
-
-	store := &bolt.ImageRedirectionStore{
+	store := &bolt.RedirectionStore{
 		DB: db,
 	}
 	if store != nil {
 
 	}
 
-	helloHandler := http.NewHelloHandler()
-	e.GET("/", helloHandler.HandleHello)
+	redirHandler := &http.RedirectionHandler{}
+	e.POST("/redirections", redirHandler.HandleCreate)
 	e.Logger.Fatal(e.Start(os.GetEnvWithDefault("HTTP_ADDR", ":9494")))
 }

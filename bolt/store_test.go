@@ -10,12 +10,12 @@ import (
 	"github.com/genesor/cochonou/bolt"
 )
 
-func setup(t *testing.T, db storm.Node) (*bolt.ImageRedirectionStore, func()) {
+func setup(t *testing.T, db storm.Node) (*bolt.RedirectionStore, func()) {
 	tx, err := db.Begin(true)
 	if err != nil {
 		t.Fatal(err)
 	}
-	store := &bolt.ImageRedirectionStore{DB: tx}
+	store := &bolt.RedirectionStore{DB: tx}
 
 	return store, func() { tx.Rollback() }
 }
@@ -30,12 +30,12 @@ func TestSave(t *testing.T) {
 		store, rollback := setup(t, db)
 		defer rollback()
 
-		redir := &cochonou.ImageRedirection{
+		redir := &cochonou.Redirection{
 			URL:       "http://sadoma.so/",
 			SubDomain: "cochon",
 		}
 
-		redir2 := &cochonou.ImageRedirection{
+		redir2 := &cochonou.Redirection{
 			URL:       "http://sadoma.so/",
 			SubDomain: "cochon2",
 		}
@@ -54,12 +54,12 @@ func TestSave(t *testing.T) {
 		store, rollback := setup(t, db)
 		defer rollback()
 
-		redir := &cochonou.ImageRedirection{
+		redir := &cochonou.Redirection{
 			URL:       "http://sadoma.so/",
 			SubDomain: "cochon",
 		}
 
-		redir2 := &cochonou.ImageRedirection{
+		redir2 := &cochonou.Redirection{
 			URL:       "http://sadoma.so/",
 			SubDomain: "cochon",
 		}

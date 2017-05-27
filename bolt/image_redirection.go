@@ -4,24 +4,24 @@ import (
 	"github.com/genesor/cochonou"
 )
 
-// ImageRedirection is the struct that represents a cochonou.ImageRedirection
+// Redirection is the struct that represents a cochonou.Redirection
 // inside the BoltDB.
-type ImageRedirection struct {
+type Redirection struct {
 	ID        int    `storm:"id,increment"`
 	SubDomain string `storm:"unique"`
 	URL       string
 }
 
-func toBoltImageRedirection(img *cochonou.ImageRedirection) *ImageRedirection {
-	return &ImageRedirection{
+func toBoltRedirection(img *cochonou.Redirection) *Redirection {
+	return &Redirection{
 		ID:        img.ID,
 		SubDomain: img.SubDomain,
 		URL:       img.URL,
 	}
 }
 
-func fromBoltImageRedirection(img *ImageRedirection) *cochonou.ImageRedirection {
-	return &cochonou.ImageRedirection{
+func fromBoltRedirection(img *Redirection) *cochonou.Redirection {
+	return &cochonou.Redirection{
 		ID:        img.ID,
 		SubDomain: img.SubDomain,
 		URL:       img.URL,

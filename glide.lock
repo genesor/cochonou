@@ -1,6 +1,8 @@
-hash: 639e661f1afe58b60d88473fc4800a61cb63889ced5c394dc579490402c278f7
-updated: 2017-05-21T14:38:36.350894535+02:00
+hash: ab301e8afaa8842982a8e550a197b4efc706a315f7c9c9f19923d602e6555327
+updated: 2017-05-27T17:36:25.71855258+02:00
 imports:
+- name: github.com/asaskevich/govalidator
+  version: 4918b99a7cb949bb295f3c7bbaf24b577d806e35
 - name: github.com/asdine/storm
   version: e8518cc1200f320e508639491f9390b9c7c37970
   subpackages:
@@ -46,8 +48,6 @@ imports:
   version: 9ccfe848b9db8435a24c424abbc07a921adf1df5
   subpackages:
   - unix
-- name: gopkg.in/ini.v1
-  version: 36da989cdc560b989d8f195aec46214d33665d20
 testImports:
 - name: github.com/davecgh/go-spew
   version: 6d212800a42e8ab5c146b8ace3490ee17e5225f9
