@@ -1,6 +1,8 @@
 package ovh
 
 import (
+	go_ovh "github.com/ovh/go-ovh/ovh"
+
 	"github.com/genesor/cochonou"
 )
 
@@ -24,4 +26,15 @@ func (h *DomainHandler) CreateDomainRedirection(subDomain string, dest string) e
 	_, err = h.Client.CreateDomainRedirection(subDomain, dest)
 
 	return err
+}
+
+func NewDomainHandler(domain string, ovhClient *go_ovh.Client) *DomainHandler {
+	return &DomainHandler{
+		Client: &Client{
+			OVHWrapper: &HTTPAPIWrapper{
+				Domain: domain,
+				Client: ovhClient,
+			},
+		},
+	}
 }
