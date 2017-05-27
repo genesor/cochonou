@@ -1,7 +1,7 @@
 package ovh
 
 import (
-	"github.com/Genesor/cochonou"
+	"github.com/genesor/cochonou"
 )
 
 // DomainHandler is the implementation of cochonou.DomainHandler for OVH.

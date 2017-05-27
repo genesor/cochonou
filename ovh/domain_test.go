@@ -6,7 +6,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/Genesor/cochonou"
+	"github.com/genesor/cochonou"
 	"github.com/genesor/cochonou/ovh"
 	"github.com/genesor/cochonou/ovh/mock"
 )
