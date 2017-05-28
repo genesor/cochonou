@@ -8,7 +8,7 @@ install:
 	glide install
 
 run: dep-start
-	go run cmd/cochonou/main.go
+	go run cmd/cochonou/main.go -dev
 
 test: dep-start
 	go test -v -cover $(PACKAGES)

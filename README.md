@@ -27,6 +27,8 @@ cd $GOPATH/src
 mkdir github.com
 ```
 
+You'll need to update the values inside `dev.env` to work correctly with your domain.
+
 Then follow this
 
 ```bash
