@@ -12,8 +12,11 @@ Sub-domain generator for image listing written in Go
 # Pull the latest version from quay.io
 docker pull quay.io/genesor/cochonou
 # Create & start the cochonou container from the pulled image
-docker run -d -p 9494:9494 --name cochonou quay.io/genesor/cochonou
+docker run -d -p 94:9494 -v /cochonou/db:/db --env-file /cochonou/cochonou.env --name cochonou quay.io/genesor/cochonou
 ```
+
+Replace `/cochonou/db:/db` with your desired path of for the shared volume containing the BoltDB file.
+Replace `/cochonou/cochonou.env` with the path of your own env file with the needed environment vars filled. You can also set the env vars with the `-e` option.
 
 Your cochonou will be then accessible via [http://localhost:9494](http://localhost:9494)
 
