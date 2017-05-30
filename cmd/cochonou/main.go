@@ -5,6 +5,7 @@ import (
 
 	"github.com/asdine/storm"
 	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
 	go_ovh "github.com/ovh/go-ovh/ovh"
 	"github.com/subosito/gotenv"
 
@@ -55,6 +56,10 @@ func main() {
 	}
 
 	e := echo.New()
+	// Root level middleware
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
+
 	e.POST("/redirections", redirHandler.HandleCreate)
 	e.Logger.Fatal(e.Start(os.GetEnvWithDefault("HTTP_ADDR", ":9494")))
 }

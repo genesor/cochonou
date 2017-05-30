@@ -1,5 +1,5 @@
 hash: df6713d93c25c0c91fb1d0d58d54f9fc1b5959702aa29d9ca85d9f7d6378c3a6
-updated: 2017-05-28T21:26:34.860378675+02:00
+updated: 2017-05-28T23:38:24.969949622+02:00
 imports:
 - name: github.com/asaskevich/govalidator
   version: 4918b99a7cb949bb295f3c7bbaf24b577d806e35
@@ -13,6 +13,8 @@ imports:
   - q
 - name: github.com/boltdb/bolt
   version: 583e8937c61f1af6513608ccc75c97b6abdf4ff9
+- name: github.com/dgrijalva/jwt-go
+  version: 6c8dedd55f8a2e41f605de6d5d66e51ed1f299fc
 - name: github.com/emirpasic/gods
   version: f6c17b524822278a87e3b3bd809fec33b51f5b46
   subpackages:
@@ -22,11 +24,15 @@ imports:
   - utils
 - name: github.com/labstack/echo
   version: 1049c9613cd371b7ea8f219404c9a821734781ed
+  subpackages:
+  - middleware
 - name: github.com/labstack/gommon
   version: 9298d710c664bcd21c454120f63a00fb7d484458
   subpackages:
+  - bytes
   - color
   - log
+  - random
 - name: github.com/mattn/go-colorable
   version: ded68f7a9561c023e790de24279db7ebf473ea80
 - name: github.com/mattn/go-isatty
