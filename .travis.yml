@@ -11,7 +11,7 @@ services:
 env:
   global:
     - COMMIT=${TRAVIS_COMMIT}
-    - BRANCH=${TRAVIS_BRANCH}
+    - BRANCH=${TRAVIS_BRANCH//\//-}
     - DOCKER_COMPOSE_VERSION=1.13.0
 
 before_install:
@@ -40,8 +40,10 @@ install:
 
 script:
     - make test
-    - docker login quay.io -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
 
+
+after_success:
+    - docker login quay.io -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
     # We want to have two different behaviours between builds on the master branch
     # and builds on all other branches.
     #
