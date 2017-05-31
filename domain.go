@@ -22,7 +22,16 @@ type StoredDomainHandler struct {
 // CreateDomainRedirection calls another DomainHandler and save the redirection inside
 // a store.
 func (h *StoredDomainHandler) CreateDomainRedirection(subDomain string, dest string) error {
-	err := h.DomainHandler.CreateDomainRedirection(subDomain, dest)
+	_, err := h.Store.GetBySubDomain(subDomain)
+	if err != ErrNotFound {
+		if err == nil {
+			return ErrSubDomainAlreadyExists
+		}
+
+		return err
+	}
+
+	err = h.DomainHandler.CreateDomainRedirection(subDomain, dest)
 	if err != nil {
 		return err
 	}

@@ -25,6 +25,7 @@ func TestSave(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	defer db.Close()
 
 	t.Run("OK - Save", func(t *testing.T) {
 		store, rollback := setup(t, db)
@@ -72,5 +73,42 @@ func TestSave(t *testing.T) {
 		require.NotNil(t, err)
 		require.Equal(t, cochonou.ErrSubDomainUsed, err)
 		require.Equal(t, 0, redir2.ID)
+	})
+}
+
+func TestGetBySubDomain(t *testing.T) {
+	db, err := storm.Open("../cochonou_test.db")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close()
+
+	t.Run("OK - Exists", func(t *testing.T) {
+		store, rollback := setup(t, db)
+		defer rollback()
+
+		redir := &cochonou.Redirection{
+			URL:       "http://sadoma.so/",
+			SubDomain: "cochon",
+		}
+
+		err := store.Save(redir)
+		require.NoError(t, err)
+		require.NotEqual(t, 0, redir.ID)
+
+		redir2, err := store.GetBySubDomain("cochon")
+		require.NoError(t, err)
+		require.Equal(t, "cochon", redir2.SubDomain)
+		require.Equal(t, "http://sadoma.so/", redir2.URL)
+	})
+
+	t.Run("NOK - Doesn't exists", func(t *testing.T) {
+		store, rollback := setup(t, db)
+		defer rollback()
+
+		redir2, err := store.GetBySubDomain("cochon")
+		require.Error(t, err)
+		require.Equal(t, cochonou.ErrNotFound, err)
+		require.Nil(t, redir2)
 	})
 }

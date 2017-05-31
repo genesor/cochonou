@@ -31,6 +31,9 @@ func TestStoredDomainHandlerCreate(t *testing.T) {
 
 			return nil
 		}
+		store.GetBySubDomainFn = func(string) (*cochonou.Redirection, error) {
+			return nil, cochonou.ErrNotFound
+		}
 		store.SaveFn = func(redir *cochonou.Redirection) error {
 			require.Equal(t, "subtest", redir.SubDomain)
 			require.Equal(t, "http://sadoma.so", redir.URL)
@@ -43,6 +46,7 @@ func TestStoredDomainHandlerCreate(t *testing.T) {
 
 		require.NoError(t, err)
 		require.Equal(t, 1, mockHandler.CreateDomainRedirectionCall)
+		require.Equal(t, 1, store.GetBySubDomainCall)
 		require.Equal(t, 1, store.SaveCall)
 	})
 
@@ -55,12 +59,32 @@ func TestStoredDomainHandlerCreate(t *testing.T) {
 
 			return cochonou.ErrSubDomainAlreadyExists
 		}
+		store.GetBySubDomainFn = func(string) (*cochonou.Redirection, error) {
+			return nil, cochonou.ErrNotFound
+		}
 
 		err := storedHandler.CreateDomainRedirection("subtest", "http://sadoma.so")
 
 		require.Error(t, err)
 		require.Equal(t, cochonou.ErrSubDomainAlreadyExists, err)
 		require.Equal(t, 1, mockHandler.CreateDomainRedirectionCall)
+		require.Equal(t, 1, store.GetBySubDomainCall)
+		require.Equal(t, 0, store.SaveCall)
+	})
+
+	t.Run("NOK - GetBySubDomain exists", func(t *testing.T) {
+		storedHandler, mockHandler, store := setupStored()
+
+		store.GetBySubDomainFn = func(string) (*cochonou.Redirection, error) {
+			return &cochonou.Redirection{ID: 94}, nil
+		}
+
+		err := storedHandler.CreateDomainRedirection("subtest", "http://sadoma.so")
+
+		require.Error(t, err)
+		require.Equal(t, cochonou.ErrSubDomainAlreadyExists, err)
+		require.Equal(t, 0, mockHandler.CreateDomainRedirectionCall)
+		require.Equal(t, 1, store.GetBySubDomainCall)
 		require.Equal(t, 0, store.SaveCall)
 	})
 
@@ -72,6 +96,9 @@ func TestStoredDomainHandlerCreate(t *testing.T) {
 			require.Equal(t, "http://sadoma.so", target)
 
 			return nil
+		}
+		store.GetBySubDomainFn = func(string) (*cochonou.Redirection, error) {
+			return nil, cochonou.ErrNotFound
 		}
 		store.SaveFn = func(redir *cochonou.Redirection) error {
 			require.Equal(t, "subtest", redir.SubDomain)
@@ -86,6 +113,7 @@ func TestStoredDomainHandlerCreate(t *testing.T) {
 		require.Error(t, err)
 		require.Equal(t, cochonou.ErrSubDomainAlreadyExists, err)
 		require.Equal(t, 1, mockHandler.CreateDomainRedirectionCall)
+		require.Equal(t, 1, store.GetBySubDomainCall)
 		require.Equal(t, 1, store.SaveCall)
 	})
 
@@ -97,6 +125,9 @@ func TestStoredDomainHandlerCreate(t *testing.T) {
 			require.Equal(t, "http://sadoma.so", target)
 
 			return nil
+		}
+		store.GetBySubDomainFn = func(string) (*cochonou.Redirection, error) {
+			return nil, cochonou.ErrNotFound
 		}
 		store.SaveFn = func(redir *cochonou.Redirection) error {
 			require.Equal(t, "subtest", redir.SubDomain)
@@ -111,6 +142,7 @@ func TestStoredDomainHandlerCreate(t *testing.T) {
 		require.Error(t, err)
 		require.NotEqual(t, cochonou.ErrSubDomainAlreadyExists, err)
 		require.Equal(t, 1, mockHandler.CreateDomainRedirectionCall)
+		require.Equal(t, 1, store.GetBySubDomainCall)
 		require.Equal(t, 1, store.SaveCall)
 	})
 }

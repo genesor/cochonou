@@ -35,3 +35,19 @@ func (s *RedirectionStore) Save(redir *cochonou.Redirection) error {
 //
 // 	return list, nil
 // }
+
+// GetBySubDomain retrieves a redirection by its subdomain.
+func (s *RedirectionStore) GetBySubDomain(subdomain string) (*cochonou.Redirection, error) {
+	boltRedir := new(Redirection)
+
+	err := s.DB.One("SubDomain", subdomain, boltRedir)
+	if err != nil {
+		if err == storm.ErrNotFound {
+			return nil, cochonou.ErrNotFound
+		}
+
+		return nil, err
+	}
+
+	return fromBoltRedirection(boltRedir), nil
+}
