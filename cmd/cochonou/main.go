@@ -2,8 +2,10 @@ package main
 
 import (
 	"flag"
+	std_os "os"
 
 	"github.com/asdine/storm"
+	"github.com/bsphere/le_go"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 	go_ovh "github.com/ovh/go-ovh/ovh"
@@ -59,6 +61,18 @@ func main() {
 	// Root level middleware
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
+
+	logEntriesToken := std_os.Getenv("LOGENTRIES_TOKEN")
+	if logEntriesToken != "" {
+		writer, err := le_go.Connect(logEntriesToken)
+		if err != nil {
+			panic(err)
+		}
+
+		e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+			Output: writer,
+		}))
+	}
 
 	e.POST("/redirections", redirHandler.HandleCreate)
 	e.Logger.Fatal(e.Start(os.GetEnvWithDefault("HTTP_ADDR", ":9494")))

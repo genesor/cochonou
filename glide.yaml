@@ -11,6 +11,7 @@ import:
   version: ^6.0.0
 - package: github.com/subosito/gotenv
   version: ^1.1.0
+- package: github.com/bsphere/le_go
 testImport:
 - package: github.com/stretchr/testify
   version: ^1.1.4

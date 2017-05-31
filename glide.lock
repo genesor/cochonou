@@ -1,5 +1,5 @@
-hash: df6713d93c25c0c91fb1d0d58d54f9fc1b5959702aa29d9ca85d9f7d6378c3a6
-updated: 2017-05-28T23:38:24.969949622+02:00
+hash: 85f5ff15e9d6a7839a26352bb15f44bc1a3c215df043e73690f9b394542c2f14
+updated: 2017-05-31T02:09:08.008844236+02:00
 imports:
 - name: github.com/asaskevich/govalidator
   version: 4918b99a7cb949bb295f3c7bbaf24b577d806e35
@@ -13,6 +13,8 @@ imports:
   - q
 - name: github.com/boltdb/bolt
   version: 583e8937c61f1af6513608ccc75c97b6abdf4ff9
+- name: github.com/bsphere/le_go
+  version: 7a984a84b5492ae539b79b62fb4a10afc63c7bcf
 - name: github.com/dgrijalva/jwt-go
   version: 6c8dedd55f8a2e41f605de6d5d66e51ed1f299fc
 - name: github.com/emirpasic/gods
