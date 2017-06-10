@@ -30,10 +30,15 @@ func (s *RedirectionStore) Save(redir *cochonou.Redirection) error {
 }
 
 // GetAll fetches all the Redirection from the Bolt database.
-func (s *RedirectionStore) GetAll() ([]cochonou.Redirection, error) {
-	var redirs []cochonou.Redirection
+func (s *RedirectionStore) GetAll() ([]*cochonou.Redirection, error) {
+	var r []Redirection
+	var redirs []*cochonou.Redirection
 
 	err := s.DB.All(&redirs)
+
+	for _, redir := range r {
+		redirs = append(redirs, fromBoltRedirection(&redir))
+	}
 
 	return redirs, err
 }

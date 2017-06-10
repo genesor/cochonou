@@ -13,6 +13,7 @@ import (
 // with Redirections.
 type RedirectionHandler struct {
 	DomainHandler cochonou.DomainHandler
+	Store         cochonou.RedirectionStore
 }
 
 // CreatePayload represents the JSON payload for HandleCreate.
@@ -46,4 +47,22 @@ func (h *RedirectionHandler) HandleCreate(c echo.Context) error {
 	}
 
 	return c.NoContent(http.StatusCreated)
+}
+
+// HandleGetList gets all Redirection from the store and returns
+// them as JSON.
+func (h *RedirectionHandler) HandleGetList(c echo.Context) error {
+	r, err := h.Store.GetAll()
+
+	if err != nil {
+		return c.JSON(http.StatusServiceUnavailable, NewJSONError("error_internal", "Unexpected error.", err))
+	}
+
+	var redirs []*JSONRedirection
+
+	for _, redir := range r {
+		redirs = append(redirs, toJSONRedirection(redir))
+	}
+
+	return c.JSON(http.StatusOK, redirs)
 }

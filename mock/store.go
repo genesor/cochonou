@@ -9,7 +9,7 @@ type RedirectionStore struct {
 	GetBySubDomainFn   func(string) (*cochonou.Redirection, error)
 	GetBySubDomainCall int
 
-	GetAllFn   func() ([]cochonou.Redirection, error)
+	GetAllFn   func() ([]*cochonou.Redirection, error)
 	GetAllCall int
 }
 
@@ -25,7 +25,7 @@ func (s *RedirectionStore) GetBySubDomain(subdomain string) (*cochonou.Redirecti
 	return s.GetBySubDomainFn(subdomain)
 }
 
-func (s *RedirectionStore) GetAll() ([]cochonou.Redirection, error) {
+func (s *RedirectionStore) GetAll() ([]*cochonou.Redirection, error) {
 	s.GetAllCall++
 
 	return s.GetAllFn()
