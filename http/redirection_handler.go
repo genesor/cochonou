@@ -15,13 +15,6 @@ type RedirectionHandler struct {
 	DomainHandler cochonou.DomainHandler
 }
 
-// NewRedirectionHandler instanciates a RedirectionHandler.
-func NewRedirectionHandler(domainHandler cochonou.DomainHandler) *RedirectionHandler {
-	return &RedirectionHandler{
-		DomainHandler: domainHandler,
-	}
-}
-
 // CreatePayload represents the JSON payload for HandleCreate.
 type CreatePayload struct {
 	Target    string `json:"target,omitempty" valid:"url,required"`

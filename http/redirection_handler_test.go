@@ -18,7 +18,9 @@ import (
 func setupRedirHandler() (*cochonou_http.RedirectionHandler, *mock.DomainHandler) {
 	handler := &mock.DomainHandler{}
 
-	httpHandler := cochonou_http.NewRedirectionHandler(handler)
+	httpHandler := &cochonou_http.RedirectionHandler{
+		DomainHandler: handler,
+	}
 
 	return httpHandler, handler
 }
