@@ -29,12 +29,19 @@ func (s *RedirectionStore) Save(redir *cochonou.Redirection) error {
 	return nil
 }
 
-// All fetches all the Redirection from the Bolt database.
-// func (s *RedirectionStore) All() ([]cochonou.Redirection, error) {
-// 	list := make([]cochonou.Redirection, 0)
-//
-// 	return list, nil
-// }
+// GetAll fetches all the Redirection from the Bolt database.
+func (s *RedirectionStore) GetAll() ([]*cochonou.Redirection, error) {
+	var r []Redirection
+	var redirs []*cochonou.Redirection
+
+	err := s.DB.All(&redirs)
+
+	for _, redir := range r {
+		redirs = append(redirs, fromBoltRedirection(&redir))
+	}
+
+	return redirs, err
+}
 
 // GetBySubDomain retrieves a redirection by its subdomain.
 func (s *RedirectionStore) GetBySubDomain(subdomain string) (*cochonou.Redirection, error) {

@@ -55,6 +55,7 @@ func main() {
 
 	redirHandler := &http.RedirectionHandler{
 		DomainHandler: storedDomainHandler,
+		Store:         store,
 	}
 
 	e := echo.New()
@@ -75,5 +76,6 @@ func main() {
 	}
 
 	e.POST("/redirections", redirHandler.HandleCreate)
+	e.GET("/redirections", redirHandler.HandleGetList)
 	e.Logger.Fatal(e.Start(os.GetEnvWithDefault("HTTP_ADDR", ":9494")))
 }

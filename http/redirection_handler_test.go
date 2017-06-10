@@ -18,9 +18,21 @@ import (
 func setupRedirHandler() (*cochonou_http.RedirectionHandler, *mock.DomainHandler) {
 	handler := &mock.DomainHandler{}
 
-	httpHandler := cochonou_http.NewRedirectionHandler(handler)
+	httpHandler := &cochonou_http.RedirectionHandler{
+		DomainHandler: handler,
+	}
 
 	return httpHandler, handler
+}
+
+func setupRedirHandlerWithStore() (*cochonou_http.RedirectionHandler, *mock.RedirectionStore) {
+	store := &mock.RedirectionStore{}
+
+	httpHandler := &cochonou_http.RedirectionHandler{
+		Store: store,
+	}
+
+	return httpHandler, store
 }
 
 func TestCreateRedirection(t *testing.T) {
@@ -174,5 +186,73 @@ func TestCreateRedirection(t *testing.T) {
 			}
 		`, rec.Body.String())
 		require.Equal(t, 1, domainHandler.CreateDomainRedirectionCall)
+	})
+}
+
+func TestGetListRedirection(t *testing.T) {
+	t.Run("OK", func(t *testing.T) {
+		e := echo.New()
+
+		req := httptest.NewRequest(echo.GET, "/redirections", strings.NewReader(""))
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+
+		rec := httptest.NewRecorder()
+
+		c := e.NewContext(req, rec)
+		c.SetPath("/redirections")
+
+		httpHandler, store := setupRedirHandlerWithStore()
+		store.GetAllFn = func() ([]*cochonou.Redirection, error) {
+			return []*cochonou.Redirection{
+				&cochonou.Redirection{
+					ID:        9494,
+					SubDomain: "cochon",
+					URL:       "http://sadoma.so",
+				},
+			}, nil
+		}
+
+		err := httpHandler.HandleGetList(c)
+
+		require.NoError(t, err)
+		require.Equal(t, http.StatusOK, rec.Code)
+		require.JSONEq(t, `
+		[{
+			"id":9494,
+			"sub_domain":"cochon",
+			"url":"http://sadoma.so"
+		}]
+		`, rec.Body.String())
+		require.Equal(t, 1, store.GetAllCall)
+	})
+
+	t.Run("NOK", func(t *testing.T) {
+		e := echo.New()
+
+		req := httptest.NewRequest(echo.GET, "/redirections", strings.NewReader(""))
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+
+		rec := httptest.NewRecorder()
+
+		c := e.NewContext(req, rec)
+		c.SetPath("/redirections")
+
+		httpHandler, store := setupRedirHandlerWithStore()
+		store.GetAllFn = func() ([]*cochonou.Redirection, error) {
+			return nil, errors.New("some error")
+		}
+
+		err := httpHandler.HandleGetList(c)
+
+		require.NoError(t, err)
+		require.Equal(t, http.StatusServiceUnavailable, rec.Code)
+		require.JSONEq(t, `
+		{
+			"code":"error_internal",
+			"message":"Unexpected error.",
+			"details":"some error"
+		}
+		`, rec.Body.String())
+		require.Equal(t, 1, store.GetAllCall)
 	})
 }

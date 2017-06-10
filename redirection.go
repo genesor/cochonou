@@ -21,5 +21,5 @@ type Redirection struct {
 type RedirectionStore interface {
 	Save(redir *Redirection) error
 	GetBySubDomain(string) (*Redirection, error)
-	// All() ([]Redirection, error)
+	GetAll() ([]*Redirection, error)
 }
