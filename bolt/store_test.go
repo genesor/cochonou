@@ -112,3 +112,31 @@ func TestGetBySubDomain(t *testing.T) {
 		require.Nil(t, redir2)
 	})
 }
+
+func TestGetAll(t *testing.T) {
+	db, err := storm.Open("../cochonou_test.db")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close()
+
+	t.Run("OK", func(t *testing.T) {
+		store, rollback := setup(t, db)
+		defer rollback()
+
+		redir := &cochonou.Redirection{
+			URL:       "http://sadoma.so/",
+			SubDomain: "cochon",
+		}
+
+		err := store.Save(redir)
+		require.NoError(t, err)
+		require.NotEqual(t, 0, redir.ID)
+
+		list, err := store.GetAll()
+		require.NoError(t, err)
+		require.Len(t, list, 1)
+		require.Equal(t, "cochon", list[0].SubDomain)
+		require.Equal(t, "http://sadoma.so/", list[0].URL)
+	})
+}
