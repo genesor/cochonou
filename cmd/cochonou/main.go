@@ -74,6 +74,8 @@ func main() {
 	servers = append(servers, api)
 
 	web.Server.Addr = os.GetEnvWithDefault("WEB_HTTP_ADDR", ":9393")
+	web.Static("/assets", "web/assets")
+	web.File("*", "web/index.html")
 	servers = append(servers, web)
 
 	// Config and setup servers
