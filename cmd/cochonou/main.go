@@ -1,8 +1,13 @@
 package main
 
 import (
+	"context"
 	"flag"
 	std_os "os"
+	"os/signal"
+	"sync"
+	"syscall"
+	"time"
 
 	"github.com/asdine/storm"
 	"github.com/bsphere/le_go"
@@ -58,24 +63,64 @@ func main() {
 		Store:         store,
 	}
 
-	e := echo.New()
-	// Root level middleware
-	e.Use(middleware.Logger())
-	e.Use(middleware.Recover())
+	servers := []*echo.Echo{}
+	api := echo.New()
+	web := echo.New()
 
-	logEntriesToken := std_os.Getenv("LOGENTRIES_TOKEN")
-	if logEntriesToken != "" {
-		writer, err := le_go.Connect(logEntriesToken)
-		if err != nil {
-			panic(err)
+	api.POST("/redirections", redirHandler.HandleCreate)
+	api.GET("/redirections", redirHandler.HandleGetList)
+
+	api.Server.Addr = os.GetEnvWithDefault("API_HTTP_ADDR", ":9494")
+	servers = append(servers, api)
+
+	web.Server.Addr = os.GetEnvWithDefault("WEB_HTTP_ADDR", ":9393")
+	servers = append(servers, web)
+
+	// Config and setup servers
+	var wg sync.WaitGroup
+	for _, server := range servers {
+		// Add middlewares to servers
+		server.Use(middleware.Logger())
+		server.Use(middleware.Recover())
+
+		logEntriesToken := std_os.Getenv("LOGENTRIES_TOKEN")
+		if logEntriesToken != "" {
+			writer, err := le_go.Connect(logEntriesToken)
+			if err != nil {
+				panic(err)
+			}
+
+			api.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+				Output: writer,
+			}))
 		}
 
-		e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
-			Output: writer,
-		}))
+		wg.Add(1)
+		go func(server *echo.Echo) {
+			defer wg.Done()
+			server.Logger.Fatal(server.StartServer(server.Server))
+		}(server)
 	}
 
-	e.POST("/redirections", redirHandler.HandleCreate)
-	e.GET("/redirections", redirHandler.HandleGetList)
-	e.Logger.Fatal(e.Start(os.GetEnvWithDefault("HTTP_ADDR", ":9494")))
+	c := make(chan std_os.Signal, 1)
+	signal.Notify(c, std_os.Interrupt, syscall.SIGTERM)
+	go func() {
+		for _ = range c {
+			for _, server := range servers {
+				defer wg.Done()
+				wg.Add(1)
+				// Wait for interrupt signal to gracefully shutdown the server with
+				// a timeout of 5 seconds.
+				ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+				defer cancel()
+				server.Shutdown(ctx)
+			}
+		}
+	}()
+
+	wg.Wait()
+}
+
+func startServer(e *echo.Echo) {
+	e.Logger.Fatal(e.StartServer(e.Server))
 }
