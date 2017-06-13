@@ -1,5 +1,5 @@
 # build stage
-FROM golang:1.8.1-alpine AS build-env
+FROM golang:1.8.3-alpine AS build-env
 
 RUN apk --no-cache add ca-certificates && update-ca-certificates
 
