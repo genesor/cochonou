@@ -13,6 +13,7 @@ FROM alpine:3.5
 RUN apk --no-cache add ca-certificates && update-ca-certificates
 
 EXPOSE 9494
+EXPOSE 9393
 
 WORKDIR /app
 COPY --from=build-env /go/bin/cochonou /app/
