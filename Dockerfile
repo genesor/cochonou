@@ -17,5 +17,5 @@ EXPOSE 9393
 
 WORKDIR /app
 COPY --from=build-env /go/bin/cochonou /app/
-COPY --from=build-env /go/src/github.com/genesor/cochonou/web /app/
+COPY --from=build-env /go/src/github.com/genesor/cochonou/web /app/web
 ENTRYPOINT ./cochonou
