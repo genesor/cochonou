@@ -1,0 +1,101 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #EEE;
+}
+
+header {
+  text-align: center;
+  background-color: rgba(255, 255, 255, .7);
+  color: #d73e39;
+  padding: 25px 0;
+  font-size: 40px;
+  font-weight: bold;
+  background-color: white;
+  background-image: url('../img/bg_pattern.jpg');
+  background-size: 40px 40px;
+}
+
+.logo {
+  display: inline-block;
+  padding: 10px 10px 6px 10px;
+  background-color: #FFF;
+  border: 4px solid #D02430;
+}
+
+.main-wrapper {
+  max-width: 750px;
+  margin: auto;
+  padding: 0 15px;
+  position: relative;
+}
+
+.form {
+  background-color: #D02430;
+  height: 30px;
+}
+
+.form input {
+  height: 30px;
+  border: none;
+  padding-left: 10px;
+}
+
+.form .redirection-link {
+  border-right: 1px solid #CCC;
+}
+
+.form .redirection-link,
+.form .subdomain {
+  width: calc(50% - 15px);
+  border-bottom: 1px solid #CCC;
+  border-top: 1px solid #CCC;
+}
+
+.form button[type="submit"] {
+  height: 30px;
+  width: 30px;
+  border: none;
+  outline: none;
+  background-color: #D02430;
+  fill: #FFF;
+  text-align: center;
+  line-height: 10px;
+  cursor: pointer;
+  
+  position: absolute;
+  top: 0;
+  right: 15px;
+}
+
+.img-list {
+  padding-top: 15px;
+  list-style-type: none;
+}
+
+.img-list li {
+  height: 48px;
+  background-color: #FFF;
+  margin-bottom: 15px;
+  padding: 15px;
+  border: 1px solid #CCC;
+  overflow: hidden;
+}
+
+.img-list li.active {
+  height: auto;
+}
+
+.actions {
+  float: right;
+}
+
+.actions button {
+  border: none;
+  outline: none;
+  background-color: white;
+  cursor: pointer;
+}
+
+.actions .delete {
+  fill: #D02430;
+}
