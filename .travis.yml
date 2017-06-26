@@ -1,71 +1,35 @@
 sudo: required
-
 language: go
-
 go:
-    - 1.8
-
+- 1.8
 services:
-    - docker
-
+- docker
 addons:
-    apt:
-        packages:
-            - sshpass
-
+  apt:
+    packages:
+    - sshpass
 env:
   global:
-    - COMMIT=${TRAVIS_COMMIT}
-    - BRANCH=${TRAVIS_BRANCH//\//-}
-    - DOCKER_COMPOSE_VERSION=1.13.0
-
+  - COMMIT=${TRAVIS_COMMIT}
+  - BRANCH=${TRAVIS_BRANCH//\//-}
+  - DOCKER_COMPOSE_VERSION=1.13.0
 before_install:
-    # Update the docker-engine to the latest version
-    - sudo apt-get update
-    - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
-
-    # Print the current docker-compose version
-    - docker-compose --version
-
-    # As of the writing of this script Travis has docker-compose v1.8.3, we want
-    # to update it to the current latest 1.13.0.
-    - sudo rm /usr/local/bin/docker-compose
-    - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
-    - chmod +x docker-compose
-    - sudo mv docker-compose /usr/local/bin
-
-    # Check that docker-compose is now running the latest version (or at least the
-    # one we specified). This is not to be confused with the version we printed
-    # before doing the update.
-    - docker-compose --version
-
+- openssl aes-256-cbc -K $encrypted_ebec8c3ecef5_key -iv $encrypted_ebec8c3ecef5_iv
+  -in deploy_rsa.enc -out deploy_rsa -d
+- sudo apt-get update
+- sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
+- docker-compose --version
+- sudo rm /usr/local/bin/docker-compose
+- curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname
+  -s`-`uname -m` > docker-compose
+- chmod +x docker-compose
+- sudo mv docker-compose /usr/local/bin
+- docker-compose --version
 install:
-    - go get github.com/Masterminds/glide
-    - glide install
-
+- go get github.com/Masterminds/glide
+- glide install
 script:
-    - make test
-
-
+- make test
 after_success:
-    - docker login quay.io -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
-    # We want to have two different behaviours between builds on the master branch
-    # and builds on all other branches.
-    #
-    # Master branch:
-    #  - Create a new tag with the build commit as name
-    #  - Update latest tag
-    #
-    # Other branches:
-    #  - Update/Create the tag with the branch as name
-    #
-    - if [ "$BRANCH" == "master" ]; then
-        docker build -t quay.io/genesor/cochonou .;
-        docker tag quay.io/genesor/cochonou:latest quay.io/genesor/cochonou:$COMMIT;
-        docker push quay.io/genesor/cochonou;
-        export SSHPASS=$DEPLOY_PWD;
-        sshpass -e ssh $DEPLOY_USER@$DEPLOY_HOST $DEPLOY_SCRIPT;
-      else
-        docker build -t quay.io/genesor/cochonou:$BRANCH .;
-        docker push quay.io/genesor/cochonou:$BRANCH;
-      fi
+- docker login quay.io -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+- ./after_success.sh
