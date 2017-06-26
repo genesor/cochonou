@@ -1,35 +1,34 @@
 sudo: required
 language: go
 go:
-- 1.8
+    - 1.8
 services:
-- docker
+    - docker
 addons:
-  apt:
-    packages:
-    - sshpass
+    apt:
+        packages:
+            - sshpass
+    ssh_known_hosts: $DEPLOY_HOST
 env:
-  global:
-  - COMMIT=${TRAVIS_COMMIT}
-  - BRANCH=${TRAVIS_BRANCH//\//-}
-  - DOCKER_COMPOSE_VERSION=1.13.0
+    global:
+        - COMMIT=${TRAVIS_COMMIT}
+        - BRANCH=${TRAVIS_BRANCH//\//-}
+        - DOCKER_COMPOSE_VERSION=1.13.0
 before_install:
-- openssl aes-256-cbc -K $encrypted_ebec8c3ecef5_key -iv $encrypted_ebec8c3ecef5_iv
-  -in deploy_rsa.enc -out deploy_rsa -d
-- sudo apt-get update
-- sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
-- docker-compose --version
-- sudo rm /usr/local/bin/docker-compose
-- curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname
-  -s`-`uname -m` > docker-compose
-- chmod +x docker-compose
-- sudo mv docker-compose /usr/local/bin
-- docker-compose --version
+    - openssl aes-256-cbc -K $encrypted_ebec8c3ecef5_key -iv $encrypted_ebec8c3ecef5_iv -in deploy_rsa.enc -out deploy_rsa -d
+    - sudo apt-get update
+    - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
+    - docker-compose --version
+    - sudo rm /usr/local/bin/docker-compose
+    - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+    - chmod +x docker-compose
+    - sudo mv docker-compose /usr/local/bin
+    - docker-compose --version
 install:
-- go get github.com/Masterminds/glide
-- glide install
+    - go get github.com/Masterminds/glide
+    - glide install
 script:
-- make test
+    - make test
 after_success:
-- docker login quay.io -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
-- ./after_success.sh
+    - docker login quay.io -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+    - ./after_success.sh
