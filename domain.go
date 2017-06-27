@@ -61,5 +61,20 @@ func (h *StoredDomainHandler) CreateDomainRedirection(subDomain string, dest str
 
 // Sync fetches all the domains from the provider and saves them inside the database
 func (h *StoredDomainHandler) Sync() ([]*Redirection, error) {
-	return nil, nil
+	redirs, err := h.DomainHandler.Sync()
+	if err != nil {
+		return nil, err
+	}
+
+	for _, redir := range redirs {
+		_, err := h.Store.GetBySubDomain(redir.SubDomain)
+		if err == ErrNotFound {
+			err := h.Store.Save(redir)
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	return redirs, nil
 }

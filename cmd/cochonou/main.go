@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
 	std_os "os"
 	"os/signal"
 	"sync"
@@ -49,6 +50,10 @@ func main() {
 		os.MustGetEnv("OVH_APP_SECRET"),
 		os.MustGetEnv("OVH_CONSUMER_KEY"),
 	)
+	if err != nil {
+		panic(err)
+	}
+
 	OVHDomainHandler := ovh.NewDomainHandler(
 		os.MustGetEnv("COCHONOU_DOMAIN"),
 		ovhClient,
@@ -57,6 +62,14 @@ func main() {
 		DomainHandler: OVHDomainHandler,
 		Store:         store,
 	}
+
+	// Sync the local DB with the Domain you are using.
+	fmt.Println("-- Start syncing with the Domain")
+	_, err = storedDomainHandler.Sync()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("-- Sync finished")
 
 	redirHandler := &http.RedirectionHandler{
 		DomainHandler: storedDomainHandler,
