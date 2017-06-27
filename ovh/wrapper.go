@@ -4,6 +4,8 @@ import (
 	"errors"
 	"path"
 	"strconv"
+
+	"github.com/genesor/cochonou"
 )
 
 var (
@@ -26,8 +28,16 @@ type DomainRedirection struct {
 	Title       string `json:"title,omitempty"`
 }
 
+func (dr *DomainRedirection) toRedirection() *cochonou.Redirection {
+	return &cochonou.Redirection{
+		SubDomain: dr.SubDomain,
+		URL:       dr.Target,
+	}
+}
+
 // APIWrapper is the interface of a bridge between OVH and differents structs.
 type APIWrapper interface {
+	GetDomainRedirectionIDs() ([]int, error)
 	GetDomainRedirectionID(name string) (int, error)
 	GetDomainRedirection(ID int) (*DomainRedirection, error)
 	PostDomainRedirection(*DomainRedirection) (*DomainRedirection, error)
@@ -56,6 +66,18 @@ func (w *HTTPAPIWrapper) GetDomainRedirectionID(name string) (int, error) {
 	}
 
 	return redirectionIDs[0], nil
+}
+
+// GetDomainRedirectionIDs fetches the ID of a redirection from its subdomain value.
+func (w *HTTPAPIWrapper) GetDomainRedirectionIDs() ([]int, error) {
+	redirectionIDs := make([]int, 0)
+
+	err := w.Client.Get(path.Join("/domain/zone/", w.Domain, "/redirection"), &redirectionIDs)
+	if err != nil {
+		return nil, err
+	}
+
+	return redirectionIDs, nil
 }
 
 // GetDomainRedirection fetches all the data for a DomainRedirection from its ID.

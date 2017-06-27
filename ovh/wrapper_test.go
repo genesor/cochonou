@@ -119,6 +119,55 @@ func TestWrapperGetDomainRedirectionID(t *testing.T) {
 	})
 }
 
+func TestWrapperGetDomainRedirectionIDs(t *testing.T) {
+	t.Run("OK", func(t *testing.T) {
+		t.Parallel()
+
+		wrapper, client := setupWrapper()
+
+		client.GetFn = func(url string, resType interface{}) error {
+			require.Equal(t, "/domain/zone/test.com/redirection", url)
+
+			returnValue, ok := resType.(*[]int)
+			if !ok {
+				t.Error("Wrong type given by GetDomainRedirectionID")
+			}
+			*returnValue = []int{1234}
+
+			return nil
+		}
+
+		IDs, err := wrapper.GetDomainRedirectionIDs()
+
+		require.NoError(t, err)
+		require.Equal(t, 1, len(IDs))
+		require.Equal(t, 1234, IDs[0])
+		require.Equal(t, 1, client.GetCall)
+	})
+
+	t.Run("NOK - Error API", func(t *testing.T) {
+		t.Parallel()
+
+		wrapper, client := setupWrapper()
+
+		client.GetFn = func(url string, resType interface{}) error {
+			require.Equal(t, "/domain/zone/test.com/redirection", url)
+
+			_, ok := resType.(*[]int)
+			if !ok {
+				t.Error("Wrong type given by GetDomainRedirectionID")
+			}
+
+			return errors.New("some error")
+		}
+
+		_, err := wrapper.GetDomainRedirectionIDs()
+
+		require.Error(t, err)
+		require.Equal(t, 1, client.GetCall)
+	})
+}
+
 func TestWrapperGetDomainRedirection(t *testing.T) {
 	t.Run("OK", func(t *testing.T) {
 		t.Parallel()

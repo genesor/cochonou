@@ -1,6 +1,10 @@
 package cochonou
 
-import "errors"
+import (
+	"errors"
+
+	"github.com/ovh/go-ovh/ovh"
+)
 
 var (
 	// ErrSubDomainAlreadyExists is used when a subdomain is already taken.
@@ -10,12 +14,14 @@ var (
 // DomainHandler is the interface used to handle domain related operations.
 type DomainHandler interface {
 	CreateDomainRedirection(subDomain string, dest string) error
+	Sync() ([]*Redirection, error)
 }
 
 // StoredDomainHandler is the implementation of DomainHandler
 // With a layer that store the redirection in a store.
 type StoredDomainHandler struct {
 	DomainHandler DomainHandler
+	OVHClient     ovh.Client
 	Store         RedirectionStore
 }
 
@@ -51,4 +57,9 @@ func (h *StoredDomainHandler) CreateDomainRedirection(subDomain string, dest str
 	}
 
 	return nil
+}
+
+// Sync fetches all the domains from the provider and saves them inside the database
+func (h *StoredDomainHandler) Sync() ([]*Redirection, error) {
+	return nil, nil
 }

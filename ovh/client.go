@@ -30,6 +30,25 @@ func (c *Client) GetDomainRedirection(id int) (*DomainRedirection, error) {
 	return subRedir, nil
 }
 
+func (c *Client) GetAllRedirections() ([]*DomainRedirection, error) {
+	IDs, err := c.OVHWrapper.GetDomainRedirectionIDs()
+	if err != nil {
+		return nil, err
+	}
+
+	redirs := []*DomainRedirection{}
+
+	for _, id := range IDs {
+		redir, err := c.OVHWrapper.GetDomainRedirection(id)
+		if err != nil {
+			return nil, err
+		}
+		redirs = append(redirs, redir)
+	}
+
+	return redirs, nil
+}
+
 // CreateDomainRedirection call the API to create a sub domain redirection..
 func (c *Client) CreateDomainRedirection(subdomain string, target string) (*DomainRedirection, error) {
 
