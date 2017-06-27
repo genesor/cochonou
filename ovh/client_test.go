@@ -236,3 +236,47 @@ func TestCreateDomainRedirection(t *testing.T) {
 		require.Equal(t, 1, wrapper.DomainRefreshDNSZoneCall)
 	})
 }
+
+func TestGetAllRedirections(t *testing.T) {
+	t.Run("OK", func(t *testing.T) {
+		client, wrapper := setupClient()
+
+		wrapper.GetDomainRedirectionIDsFn = func() ([]int, error) {
+			return []int{1234, 5678}, nil
+		}
+
+		wrapper.GetDomainRedirectionFn = func(ID int) (*ovh.DomainRedirection, error) {
+			if wrapper.GetDomainRedirectionCall == 1 {
+				require.Equal(t, 1234, ID)
+
+				return &ovh.DomainRedirection{
+					ID:        1234,
+					Zone:      "test.com",
+					Target:    "http://sadoma.so",
+					SubDomain: "subtest",
+					Type:      "visiblePermanent",
+				}, nil
+			} else if wrapper.GetDomainRedirectionCall == 2 {
+				require.Equal(t, 5678, ID)
+
+				return &ovh.DomainRedirection{
+					ID:        5678,
+					Zone:      "test.com",
+					Target:    "http://sadoma.so",
+					SubDomain: "subtest2",
+					Type:      "visiblePermanent",
+				}, nil
+			}
+
+			return nil, errors.New("unexpected call")
+		}
+
+		redirs, err := client.GetAllRedirections()
+
+		require.NoError(t, err)
+		require.NotNil(t, redirs)
+		require.Equal(t, 2, len(redirs))
+		require.Equal(t, 1, wrapper.GetDomainRedirectionIDsCall)
+		require.Equal(t, 2, wrapper.GetDomainRedirectionCall)
+	})
+}

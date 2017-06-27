@@ -16,6 +16,9 @@ type APIWrapper struct {
 
 	DomainRefreshDNSZoneFn   func() error
 	DomainRefreshDNSZoneCall int
+
+	GetDomainRedirectionIDsFn   func() ([]int, error)
+	GetDomainRedirectionIDsCall int
 }
 
 func (w *APIWrapper) GetDomainRedirectionID(name string) (int, error) {
@@ -40,4 +43,10 @@ func (w *APIWrapper) DomainRefreshDNSZone() error {
 	w.DomainRefreshDNSZoneCall++
 
 	return w.DomainRefreshDNSZoneFn()
+}
+
+func (w *APIWrapper) GetDomainRedirectionIDs() ([]int, error) {
+	w.GetDomainRedirectionIDsCall++
+
+	return w.GetDomainRedirectionIDsFn()
 }
