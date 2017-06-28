@@ -84,11 +84,20 @@ func main() {
 	api.GET("/redirections", redirHandler.HandleGetList)
 
 	api.Server.Addr = os.GetEnvWithDefault("API_HTTP_ADDR", ":9494")
+	api.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{os.GetEnvWithDefault("FRONT_HOST", "http://localhost:9393")},
+		AllowMethods: []string{echo.GET, echo.PUT, echo.POST, echo.DELETE},
+	}))
 	servers = append(servers, api)
 
 	web.Server.Addr = os.GetEnvWithDefault("WEB_HTTP_ADDR", ":9393")
+	rendererDefault := map[string]interface{}{
+		"api_host": os.GetEnvWithDefault("FRONT_API_HOST", "http://localhost:9494"),
+		"domain":   os.MustGetEnv("COCHONOU_DOMAIN"),
+	}
+	web.Renderer = http.NewRenderer(rendererDefault)
 	web.Static("/assets", "web/assets")
-	web.File("*", "web/index.html")
+	web.GET("*", http.WebHandler)
 	servers = append(servers, web)
 
 	// Config and setup servers

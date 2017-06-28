@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="/assets/css/reset.css">
     <link rel="stylesheet" href="/assets/css/main.css">
   </head>
-  <body>
+  <body data-api-host="{{ index . "api_host" }}" data-cochonou-domain="{{ index . "domain" }}">
     <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
       <symbol id="copy" viewBox="0 0 561 561">
         <path d="M395.25,0h-306c-28.05,0-51,22.95-51,51v357h51V51h306V0z M471.75,102h-280.5c-28.05,0-51,22.95-51,51v357
@@ -66,8 +66,8 @@
       </div>
     </form>
     <div class="main-wrapper">
-      <ul class="img-list">
-        <li class="active">
+      <ul id="link-list" class="img-list" data-item-html="">
+        <!--<li class="active">
           Link
           <div class="actions">
             <button class="preview">
@@ -110,8 +110,11 @@
           </div>
           <hr>
           Preview link
-        </li>
+        </li>-->
       </ul>
     </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script src="/assets/js/list.js"></script>
   </body>
 </html>
